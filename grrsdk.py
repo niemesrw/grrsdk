@@ -6,12 +6,11 @@ import json
 import logging
 import logging.config
 import os
-import time
 import requests
+import time
 
 config = ConfigParser.ConfigParser()
 config.read('grrsdk.ini')
-
 baseurl = config.get('grrsdk','baseurl')
 username = config.get('grrsdk','username')
 password = config.get('grrsdk','password')
@@ -20,12 +19,6 @@ logging.config.fileConfig('logging.conf')
 
 # create logger
 logger = logging.getLogger('grrsdk')
-
-def read_file_contents(path):
-    logger.debug('in function read_file_contents')
-    if os.path.exists(path):
-        with open(path) as infile:
-            return infile.read().strip()
 
 def read_file_contents(path):
     logger.debug('in function read_file_contents')
@@ -57,22 +50,24 @@ class GRRClient:
        #     self.start = 1463441314000
 
     def login(self):
-        logger.debug('inside method login()')
+        logger.debug('method=login')
         base64string = base64.encodestring('%s:%s' % (username,password)).replace('\n', '')
+        logger.debug('method=login, base64string=%s' % (base64string))
         authheader = "Basic %s" % base64string
         self.index_response = requests.get(baseurl, auth=(username,password))
-        csrf_token = self.index_response.cookies.get("csrftoken")
+        #self.session = session.get(baseurl, auth=(username,password))
+        csrf_token = self.index_response.cookies.get('csrftoken')
         self.headers = {
         	"Authorization": authheader,
         	"x-csrftoken": csrf_token,
         	"x-requested-with": "XMLHttpRequest"
-			}
+        }
 
     def is_installed(self,ip):
         """
         is_installed(ip) takes the argument of an IP address and returns 1 if grr is installed on that host, 0 otherwise
         """
-        logger.debug('inside method is_installed()')
+        logger.debug('method=is_installed')
         self.grr_query_ip(ip)
     	if self.jdata['items']:
             logger.debug('grr is already installed on %s' % (ip))
@@ -85,7 +80,7 @@ class GRRClient:
         return read_file_contents('token')
 
     def grr_query_ip(self,ip):
-        logger.debug('inside grr_query_ip, args: %s' % (ip))
+        logger.debug('method=grr_query_ip, args=%s' % (ip))
         req = ('%s/api/clients?query=%s' % (baseurl, ip))
         # the text[5:] is to remove the first few characters that are in the JSON response for XSSI protection
         r = requests.get(req, auth=(username, password)).text[5:]
