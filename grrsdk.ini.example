@@ -1,0 +1,4 @@
+[grrsdk]
+baseurl:  https://grr.mycompany.com
+username: api_username
+password: password
