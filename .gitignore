@@ -40,3 +40,7 @@ Thumbs.db
 # Configuration Files #
 #######################
 *.ini
+
+# PyCharm Files #
+#################
+.idea
