@@ -44,3 +44,6 @@ Thumbs.db
 # PyCharm Files #
 #################
 .idea
+
+# files specific to this package #
+token
